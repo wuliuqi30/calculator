@@ -1,0 +1,13 @@
+.button{
+    font-size: 16px;
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+
+.display{
+    text-align: right;
+    width: 300px;
+    height:50px;
+    font-size: 30px;
+}
