@@ -35,7 +35,7 @@ const operators = {
     subtract: {
         function: subtract,
         name: 'subtract',
-        symbol: '-'
+        symbol: '—'
     },
     multiply: {
         function: multiply,
@@ -61,33 +61,27 @@ const lastButtonPressedEnum = {
 
 
 
-// Monkey around with some things:
-
-let a = 3;
-let b = 5;
-// let c = operate(a, b, operators.subtract);
-// console.log(` operate(a,b,add) gives ${c}`);
-
-// Do not edit below this line
-// module.exports = {
-//     add,
-//     subtract,
-//     multiply,
-//     divide,
-//     operate
-//   };
 
 const putInDisplayWindow = function (char) {
     // Input should be a string, typically a single character
     let displayWindow = document.querySelector(".display");
 
+    
     if (calculatorState.lastButtonPressed === lastButtonPressedEnum.operator ||
         calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate ||
         calculatorState.lastButtonPressed === lastButtonPressedEnum.test) {
-        displayWindow.value = char; // Clear the display value with new data
+        displayWindow.value = char; // Clear the display value with new data 
+    } else if (char === "-"){ // if a negative sign and didn't just press the above buttons
+        displayWindow.value = char + displayWindow.value; 
     } else {
         displayWindow.value += char;
     }
+
+}
+
+const removeNegativeSign = function(){
+    let displayWindow = document.querySelector(".display");
+    displayWindow.value = displayWindow.value.slice(1);
 }
 
 // Create Calculator In Javascript: 
@@ -149,6 +143,7 @@ function createNumberButton(i) {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button");
     btn.setAttribute("id", i);
+    btn.classList.add('numberButton');
     btn.textContent = i;
 
     // Event listeners
@@ -166,6 +161,7 @@ function createDecimalPointButton() {
     const btnDot = document.createElement("button");
     btnDot.setAttribute("class", "button")
     btnDot.textContent = '.';
+    btnDot.classList.add('numberButton');
     btnDot.addEventListener("click", () => {
         let displayWindow = document.querySelector(".display");
         if (!displayWindow.value.includes('.') ||
@@ -186,6 +182,7 @@ function createOperatorButton(op) {
     btn.value = op.name;
     btn.setAttribute("id", op.name)
     calculatorContainer.appendChild(btn);
+    btn.classList.add("operatorStyle");
 
     btn.addEventListener("click", () => {
 
@@ -206,21 +203,28 @@ function createEqualsButton() {
     computeBtn.setAttribute("class", "button");
     computeBtn.setAttribute("id", lastButtonPressedEnum.calculate)
     computeBtn.textContent = "=";
-    computeBtn.classList.add("equalsButton");
+    computeBtn.classList.add("equalsStyle");
     computeBtn.addEventListener("click", () => {
         // Only do the calculation if the last thing you did was click a number. 
         // And if there is a "first number" that was previously calculated during an "operator" click
 
-        if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number &&
+        if ((calculatorState.lastButtonPressed === lastButtonPressedEnum.number ||
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.negativeSign || 
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.decimalPoint
+         ) &&
             calculatorState.firstNumber !== null
         ) {
             let displayWindow = document.querySelector(".display");
             calculatorState.secondNumber = Number(displayWindow.value);
             calculatorState.calculationResult = operate(calculatorState);
             calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
-            // Put the full calculation in the box to the left of the result
 
             putInDisplayWindow(calculatorState.calculationResult);
+
+            // putInDisplayWindow(calculatorState.firstNumber + ' ' + 
+            //     calculatorState.operatorToBeUsed.symbol + ' ' + 
+            //     calculatorState.secondNumber + ' = ' +  
+            //     calculatorState.calculationResult);
 
             // Reset the "first" and "second" number so that the calculator thinks it still needs 
             // to click an operator before a new calculation can be performed
@@ -240,7 +244,16 @@ function createNegativeSignButton(){
     negButton.setAttribute("class", "button");
     negButton.setAttribute("id", "negativeSign")
     negButton.textContent = "+/-";
-    
+    negButton.addEventListener("click", () => {
+    let displayWindow = document.querySelector(".display");
+        if (!displayWindow.value.includes('-')) {
+            putInDisplayWindow('-');
+            
+        } else {
+            removeNegativeSign();
+        }
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.negativeSign;
+    })
     calculatorContainer.appendChild(negButton)
 }
 
@@ -260,23 +273,28 @@ function createTestButton() {
 }
 // I actually create the buttons here:
 createDisplay()
-createClearButton();
-createOperatorButton(operators.add);
+
 createNumberButton(7);
 createNumberButton(8);
 createNumberButton(9);
-createOperatorButton(operators.subtract);
+createOperatorButton(operators.add);
+
 createNumberButton(4);
 createNumberButton(5);
 createNumberButton(6);
-createOperatorButton(operators.multiply);
+createOperatorButton(operators.subtract);
+
 createNumberButton(1);
 createNumberButton(2);
 createNumberButton(3);
-createOperatorButton(operators.divide);
+createOperatorButton(operators.multiply);
+
 createDecimalPointButton();
 createNumberButton(0);
 createNegativeSignButton();
+createOperatorButton(operators.divide);
+
+createClearButton();
 createEqualsButton() 
 
 
