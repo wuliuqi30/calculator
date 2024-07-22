@@ -52,7 +52,6 @@ const operators = {
     }
 }
 
-
 // An enumeration of which button was last pressed, to keep track of in the calculator state object
 const lastButtonPressedEnum = {
     clear: 'clear',
