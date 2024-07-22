@@ -54,7 +54,9 @@ const lastButtonPressedEnum = {
     number: 'number',
     calculate: 'calculate',
     operator: 'operator',
-    decimalPoint: 'decimalPoint'
+    decimalPoint: 'decimalPoint',
+    negativeSign: 'negativeSign',
+    test: 'test'
 }
 
 
@@ -80,7 +82,8 @@ const putInDisplayWindow = function (char) {
     let displayWindow = document.querySelector(".display");
 
     if (calculatorState.lastButtonPressed === lastButtonPressedEnum.operator ||
-        calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
+        calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate ||
+        calculatorState.lastButtonPressed === lastButtonPressedEnum.test) {
         displayWindow.value = char; // Clear the display value with new data
     } else {
         displayWindow.value += char;
@@ -97,7 +100,8 @@ const calculatorState = {
     secondNumber: null,
     calculationResult: null,
     displayWindowString: null,
-    lastButtonPressed: lastButtonPressedEnum.clear// Default is 'clear', can be: 'number' 'calculate' 'clear' 'operator'
+    lastButtonPressed: lastButtonPressedEnum.clear,// Default is 'clear', can be: 'number' 'calculate' 'clear' 'operator'
+    thereIsANegativeSign: false
 
 }
 
@@ -107,31 +111,21 @@ const calculatorState = {
 // Create The Calculator: 
 const body = document.querySelector('body');
 
-
 const calculatorContainer = document.createElement("div");
 calculatorContainer.className = "calculatorContainer";
 body.appendChild(calculatorContainer)
 
+// First define functions that create various buttons. Then later I'll call those functions
+// In a precise order.
+
+
 // Create the display:
-const divDisplayContainer = document.createElement('input');
-divDisplayContainer.className = "display";
-calculatorContainer.appendChild(divDisplayContainer);
-
+function createDisplay() {
+    const divDisplayContainer = document.createElement('input');
+    divDisplayContainer.className = "display";
+    calculatorContainer.appendChild(divDisplayContainer);
+}
 // Create Clear Button
-
-// const clrbtn = document.createElement("button");
-// clrbtn.setAttribute("class", "button");
-// clrbtn.setAttribute("id", "clearButton")
-// clrbtn.textContent = "Clear";
-// clrbtn.addEventListener("click", () => {
-//     let displayWindow = document.querySelector(".display");
-//     displayWindow.value = '';
-//     calculatorState.secondNumber = null;
-//     calculatorState.firstNumber = null;
-//     calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
-// }
-// )
-// calculatorContainer.appendChild(clrbtn)
 
 function createClearButton() {
     const clrbtn = document.createElement("button");
@@ -148,12 +142,10 @@ function createClearButton() {
     )
     calculatorContainer.appendChild(clrbtn)
 }
-createClearButton();
-// Create the Divide Button
 
-// Create 10 buttons
 
-for (i = 0; i <= 9; i++) {
+// Create a number button
+function createNumberButton(i) {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button");
     btn.setAttribute("id", i);
@@ -166,90 +158,128 @@ for (i = 0; i <= 9; i++) {
         calculatorState.lastButtonPressed = lastButtonPressedEnum.number;
     });
     calculatorContainer.appendChild(btn);
+
 }
 
 // Create a button for the . (decimal point)
+function createDecimalPointButton() {
+    const btnDot = document.createElement("button");
+    btnDot.setAttribute("class", "button")
+    btnDot.textContent = '.';
+    btnDot.addEventListener("click", () => {
+        let displayWindow = document.querySelector(".display");
+        if (!displayWindow.value.includes('.') ||
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
+            putInDisplayWindow(btnDot.textContent)
+            calculatorState.lastButtonPressed = lastButtonPressedEnum.decimalPoint;
+        }
+    });
+    calculatorContainer.appendChild(btnDot);
+}
 
-const btnDot = document.createElement("button");
-btnDot.setAttribute("class", "button")
-btnDot.textContent = '.';
-btnDot.addEventListener("click", () => {
-    let displayWindow = document.querySelector(".display");
-    if (!displayWindow.value.includes('.') ||
-        calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
-        putInDisplayWindow(btnDot.textContent)
-        calculatorState.lastButtonPressed = lastButtonPressedEnum.decimalPoint;
-    }
-});
-calculatorContainer.appendChild(btnDot);
+// Create a button for an operator
+function createOperatorButton(op) {
 
-// Create Buttons for the operators
-
-for (const op in operators) {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button")
-    let subObj = operators[op];
-    btn.textContent = subObj.symbol;
-    btn.value = subObj.name;
-    btn.setAttribute("id", subObj.name)
+    btn.textContent = op.symbol;
+    btn.value = op.name;
+    btn.setAttribute("id", op.name)
     calculatorContainer.appendChild(btn);
 
     btn.addEventListener("click", () => {
 
         let displayWindow = document.querySelector(".display");
         calculatorState.firstNumber = Number(displayWindow.value);
-        calculatorState.operatorToBeUsed = subObj;
+        calculatorState.operatorToBeUsed = op;
         console.log(`operation to be used is set: ${calculatorState.operatorToBeUsed.name}`)
         calculatorState.lastButtonPressed = lastButtonPressedEnum.operator;
     })
+
 }
 
 
 
 // Create Compute Button (=)
-const computeBtn = document.createElement("button");
-computeBtn.setAttribute("class", "button");
-computeBtn.setAttribute("id", lastButtonPressedEnum.calculate)
-computeBtn.textContent = "=";
-computeBtn.addEventListener("click", () => {
-    // Only do the calculation if the last thing you did was click a number. 
-    // And if there is a "first number" that was previously calculated during an "operator" click
+function createEqualsButton() {
+    const computeBtn = document.createElement("button");
+    computeBtn.setAttribute("class", "button");
+    computeBtn.setAttribute("id", lastButtonPressedEnum.calculate)
+    computeBtn.textContent = "=";
+    computeBtn.classList.add("equalsButton");
+    computeBtn.addEventListener("click", () => {
+        // Only do the calculation if the last thing you did was click a number. 
+        // And if there is a "first number" that was previously calculated during an "operator" click
 
-    if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number &&
-        calculatorState.firstNumber
-    ) {
-        let displayWindow = document.querySelector(".display");
-        calculatorState.secondNumber = Number(displayWindow.value);
-        calculatorState.calculationResult = operate(calculatorState);
-        calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
-        // Put the full calculation in the box to the left of the result
+        if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number &&
+            calculatorState.firstNumber !== null
+        ) {
+            let displayWindow = document.querySelector(".display");
+            calculatorState.secondNumber = Number(displayWindow.value);
+            calculatorState.calculationResult = operate(calculatorState);
+            calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
+            // Put the full calculation in the box to the left of the result
 
-        putInDisplayWindow(calculatorState.calculationResult);
+            putInDisplayWindow(calculatorState.calculationResult);
 
-        // Reset the "first" and "second" number so that the calculator thinks it still needs 
-        // to click an operator before a new calculation can be performed
-        calculatorState.firstNumber = null;
-        calculatorState.secondNumber = null;
+            // Reset the "first" and "second" number so that the calculator thinks it still needs 
+            // to click an operator before a new calculation can be performed
+            calculatorState.firstNumber = null;
+            calculatorState.secondNumber = null;
+
+        }
 
     }
-
+    )
+    calculatorContainer.appendChild(computeBtn)
 }
-)
-calculatorContainer.appendChild(computeBtn)
 
+//
+function createNegativeSignButton(){
+    const negButton = document.createElement("button");
+    negButton.setAttribute("class", "button");
+    negButton.setAttribute("id", "negativeSign")
+    negButton.textContent = "+/-";
+    
+    calculatorContainer.appendChild(negButton)
+}
 
 // Create a "test" button which will run through a bunch of system checks to make sure
 // that nothing is broken
 
+function createTestButton() {
+    const testButton = document.createElement("button");
+    testButton.setAttribute("class", "button");
+    testButton.setAttribute("id", "test")
+    testButton.textContent = "Test";
+    testButton.addEventListener("click", () => {
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.test;
+        runSystemTest();
+    })
+    calculatorContainer.appendChild(testButton)
+}
+// I actually create the buttons here:
+createDisplay()
+createClearButton();
+createOperatorButton(operators.add);
+createNumberButton(7);
+createNumberButton(8);
+createNumberButton(9);
+createOperatorButton(operators.subtract);
+createNumberButton(4);
+createNumberButton(5);
+createNumberButton(6);
+createOperatorButton(operators.multiply);
+createNumberButton(1);
+createNumberButton(2);
+createNumberButton(3);
+createOperatorButton(operators.divide);
+createDecimalPointButton();
+createNumberButton(0);
+createNegativeSignButton();
+createEqualsButton() 
 
-const testButton = document.createElement("button");
-testButton.setAttribute("class", "button");
-testButton.setAttribute("id", "test")
-testButton.textContent = "Test";
-testButton.addEventListener("click", () => {
-    runSystemTest();
-})
-calculatorContainer.appendChild(testButton)
+
 
 
 
@@ -268,7 +298,7 @@ calculatorContainer.appendChild(testButton)
 const runTest = true;
 function runSystemTest() {
 
-    // Specify the tests to be run:
+    // Specify the tests to be run
     let allButtons = document.querySelectorAll("button");
     let testButton1 = document.getElementById("1");
     let addButton = document.getElementById(operators.add.name);

@@ -50,3 +50,7 @@ body{
     font-style: italic;
     color: rgb(153, 150, 150);
 }
+
+.equalsButton {
+    width: 100px;
+}
