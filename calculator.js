@@ -27,17 +27,6 @@ const operate = function (calculatorState) {
 };
 
 
-// Global Object Holding Important State Variables::
-const calculatorState = {
-    operatorToBeUsed: null, // operator object, i.e. 'add', 'subtract','multiply','divide'
-    firstNumber: null,
-    secondNumber: null,
-    calculationResult: null,
-    displayWindowString: null,
-    lastButtonPressed: lastButtonPressedEnum.clear,// Default is 'clear', can be: 'number' 'calculate' 'clear' 'operator'
-    thereIsANegativeSign: false
-
-}
 
 // An enumeration object containing the operators and their function callbacks, string name, and symbols
 const operators = {
@@ -73,6 +62,18 @@ const lastButtonPressedEnum = {
     decimalPoint: 'decimalPoint',
     negativeSign: 'negativeSign',
     test: 'test'
+}
+
+// Global Object Holding Important State Variables::
+const calculatorState = {
+    operatorToBeUsed: null, // operator object, i.e. 'add', 'subtract','multiply','divide'
+    firstNumber: null,
+    secondNumber: null,
+    calculationResult: null,
+    displayWindowString: null,
+    lastButtonPressed: lastButtonPressedEnum.clear,// Default is 'clear', can be: 'number' 'calculate' 'clear' 'operator'
+    thereIsANegativeSign: false
+
 }
 
 
