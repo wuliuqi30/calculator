@@ -31,16 +31,32 @@ console.log(divide(2, 9));
 
 
 const operate = function (calculatorState) {
-    calculatorState.calculationResult = calculatorState.operatorToBeUsed(calculatorState.firstNumber, calculatorState.secondNumber);
+    calculatorState.calculationResult = calculatorState.operatorToBeUsed.function(calculatorState.firstNumber, calculatorState.secondNumber);
     calculatorState.calculateButtonJustPressed = true;
     return calculatorState.calculationResult;
 };
 
 const operators = {
-    add: add,
-    subtract: subtract,
-    multiply: multiply,
-    divide: divide
+    add: {
+        function:add,
+        name:'add',
+        symbol:'+'
+    },
+    subtract: {
+        function:subtract,
+        name:'subtract',
+        symbol:'-'
+    },
+    multiply: {
+        function:multiply,
+        name:'multiply',
+        symbol:'x'
+    },
+    divide: {
+        function:divide,
+        name:'divide',
+        symbol:'÷'
+    }
 }
 
 const lastButtonPressedEnum = {
@@ -86,7 +102,7 @@ const body = document.querySelector('body');
 
 // Global Object Holding Important State Variables::
 const calculatorState = {
-    operatorToBeUsed: null,
+    operatorToBeUsed: null, // operator object, i.e. 'add', 'subtract','multiply','divide'
     firstNumber: null,
     secondNumber: null,
     calculationResult: null,
@@ -115,20 +131,21 @@ for (i = 0; i <= 9; i++) {
 }
 
 // Create Buttons for the operators
-const numOperators = 4;
-const operatorList = ['add', 'subtract', 'multiply', 'divide']
-for (i = 0; i < operatorList.length; i++) {
+
+for (const op in operators) {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button")
-    btn.textContent = Object.getOwnPropertyNames(operators)[i];
+    let subObj = operators[op];
+    btn.textContent = subObj.symbol;
+    btn.value = subObj.name;
     body.appendChild(btn);
 
     btn.addEventListener("click", () => {
         
         let displayWindow = document.querySelector(".display");
         calculatorState.firstNumber = Number(displayWindow.value);
-        calculatorState.operatorToBeUsed = operators[btn.textContent];
-        console.log(`operation to be used is set: ${calculatorState.operatorToBeUsed}`)
+        calculatorState.operatorToBeUsed = subObj;
+        console.log(`operation to be used is set: ${calculatorState.operatorToBeUsed.name}`)
         calculatorState.lastButtonPressed = lastButtonPressedEnum.operator;
     })
 }
@@ -157,6 +174,8 @@ computeBtn.addEventListener("click", () => {
     calculatorState.secondNumber = Number(displayWindow.value);
     calculatorState.calculationResult = operate(calculatorState);
     calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
+    // Put the full calculation in the box to the left of the result
+
     putInDisplayWindow(calculatorState.calculationResult);
     
     } 
