@@ -19,16 +19,6 @@ const divide = function (a, b) {
     }
 };
 
-// Mini Tests
-console.log(add(1, 1));
-console.log(subtract(-3, 1));
-console.log(multiply(0, 0));
-console.log(multiply(0, 1));
-console.log(multiply(90, 2));
-console.log(divide(1, 0));
-console.log(divide(0, 1));
-console.log(divide(2, 9));
-
 
 const operate = function (calculatorState) {
     calculatorState.calculationResult = calculatorState.operatorToBeUsed.function(calculatorState.firstNumber, calculatorState.secondNumber);
@@ -131,7 +121,7 @@ calculatorContainer.appendChild(divDisplayContainer);
 
 const clrbtn = document.createElement("button");
 clrbtn.setAttribute("class", "button");
-clrbtn.setAttribute("id","clearButton")
+clrbtn.setAttribute("id", "clearButton")
 clrbtn.textContent = "Clear";
 clrbtn.addEventListener("click", () => {
     let displayWindow = document.querySelector(".display");
@@ -142,13 +132,15 @@ clrbtn.addEventListener("click", () => {
 }
 )
 calculatorContainer.appendChild(clrbtn)
+
 // Create the Divide Button
 
 // Create 10 buttons
 
 for (i = 0; i <= 9; i++) {
     const btn = document.createElement("button");
-    btn.setAttribute("class", "button")
+    btn.setAttribute("class", "button");
+    btn.setAttribute("id", i);
     btn.textContent = i;
 
     // Event listeners
@@ -167,8 +159,8 @@ btnDot.setAttribute("class", "button")
 btnDot.textContent = '.';
 btnDot.addEventListener("click", () => {
     let displayWindow = document.querySelector(".display");
-    if (!displayWindow.value.includes('.') || 
-    calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
+    if (!displayWindow.value.includes('.') ||
+        calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
         putInDisplayWindow(btnDot.textContent)
         calculatorState.lastButtonPressed = lastButtonPressedEnum.decimalPoint;
     }
@@ -183,6 +175,7 @@ for (const op in operators) {
     let subObj = operators[op];
     btn.textContent = subObj.symbol;
     btn.value = subObj.name;
+    btn.setAttribute("id", subObj.name)
     calculatorContainer.appendChild(btn);
 
     btn.addEventListener("click", () => {
@@ -200,12 +193,13 @@ for (const op in operators) {
 // Create Compute Button (=)
 const computeBtn = document.createElement("button");
 computeBtn.setAttribute("class", "button");
+computeBtn.setAttribute("id",lastButtonPressedEnum.calculate)
 computeBtn.textContent = "=";
 computeBtn.addEventListener("click", () => {
     // Only do the calculation if the last thing you did was click a number. 
     // And if there is a "first number" that was previously calculated during an "operator" click
-    
-    if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number && 
+
+    if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number &&
         calculatorState.firstNumber
     ) {
         let displayWindow = document.querySelector(".display");
@@ -219,7 +213,7 @@ computeBtn.addEventListener("click", () => {
         // Reset the "first" and "second" number so that the calculator thinks it still needs 
         // to click an operator before a new calculation can be performed
         calculatorState.firstNumber = null;
-        calculatorState.secondNumber = null; 
+        calculatorState.secondNumber = null;
 
     }
 
@@ -228,17 +222,57 @@ computeBtn.addEventListener("click", () => {
 calculatorContainer.appendChild(computeBtn)
 
 
+// Create a "test" button which will run through a bunch of system checks to make sure
+// that nothing is broken
+
+
+const testButton = document.createElement("button");
+testButton.setAttribute("class", "button");
+testButton.setAttribute("id","test")
+testButton.textContent = "Test";
+testButton.addEventListener("click", () => {
+    runSystemTest();
+})
+calculatorContainer.appendChild(testButton)
 
 
 
 // Things to Add: 
 
-// 1)
-// After a successful calculation,
-// show the full calculation typed out in the display window 
-// in lighter font
-
 // 2) Orient everything nicely together 
 
 // 3) Get nice colors
 
+
+
+// Tests
+
+// Automatically run a 1 + 2 = event.
+
+const runTest = true;
+function runSystemTest(){
+
+    // Specify the tests to be run:
+    let allButtons = document.querySelectorAll("button");
+    let testButton1 = document.getElementById("1");
+    let addButton = document.getElementById(operators.add.name);
+    let testButton2 = document.getElementById("2");
+    let computeBtn = document.getElementById(lastButtonPressedEnum.calculate);
+    
+    let displayVal = document.querySelector(".display");
+
+    let clickEvent = new Event('click');
+    // Press 1
+    testButton1.dispatchEvent(clickEvent);
+    //console.log(`pressed 1 and display holds ${displayVal.value}`)
+    // Press Add
+    addButton.dispatchEvent(clickEvent);
+    // Press 2
+    testButton2.dispatchEvent(clickEvent);
+    //console.log(`pressed 2 and display holds ${displayVal.value}`)
+    // Press Calculate
+    computeBtn.dispatchEvent(clickEvent);
+    displayVal.value == 3 ? displayVal.value = "SUCCESS" : displayVal.value = "FAILED";
+
+
+}
