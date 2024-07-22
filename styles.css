@@ -1,31 +1,29 @@
-body{
-    display:flex;
+body {
+    display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-
     background-color: black;
     font-family: math, monospace;
 }
 
-.calculatorContainer{
-    margin:400px;
-    display:flex;
+.calculatorContainer {
+    margin: 400px;
+    display: flex;
     width: 500px;
     height: 700px;
     flex: 0 0 auto;
     flex-wrap: wrap;
-    background-color:black;
+    background-color: black;
     justify-content: space-around;
     align-items: center;
     padding: 10px;
     font-family: math, monospace;
     border-radius: 20px;
-
     border: 5px solid orange;
 }
 
-.button, 
+.button,
 .longButton,
 .clearButton {
     flex: 0 0 auto;
@@ -37,19 +35,19 @@ body{
     font-family: math, monospace;
 }
 
-.button, 
+.button,
 .operatorStyle,
-.equalsStyle{
+.equalsStyle {
     width: 114px;
 }
 
-.numberButton{
+.numberButton {
     background-color: black;
     border-color: orange;
-    color:orange;
+    color: orange;
 }
 
-.clearButton{
+.clearButton {
     width: 360px;
     background-color: rgb(163, 130, 219);
 }
@@ -74,20 +72,18 @@ body{
 }
 
 .operatorStyle {
-
     border-radius: 10px;
     background-color: rgb(92, 202, 92);
 }
 
-.equalsStyle{
-
+.equalsStyle {
     border-radius: 10px;
     background-color: orange;
     color: black;
-    
+
 }
 
-.highlighted{
-    background-color:white;
-    color:green;
+.highlighted {
+    background-color: white;
+    color: green;
 }
