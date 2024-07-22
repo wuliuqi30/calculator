@@ -178,7 +178,8 @@ function createDecimalPointButton() {
     btn.addEventListener("click", () => {
         let displayWindow = document.querySelector(".display");
         if (!displayWindow.value.includes('.') ||
-            calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate ||
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.operator) {
             putInDisplayWindow(btn.textContent)
             calculatorState.lastButtonPressed = lastButtonPressedEnum.decimalPoint;
         }
