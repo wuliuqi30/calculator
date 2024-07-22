@@ -298,7 +298,8 @@ function createNegativeSignButton(){
     btn.textContent = "+/-";
     btn.addEventListener("click", () => {
     let displayWindow = document.querySelector(".display");
-        if (!displayWindow.value.includes('-')) {
+        if (!displayWindow.value.includes('-') || 
+        calculatorState.lastButtonPressed == lastButtonPressedEnum.operator) {
             putInDisplayWindow('-');
             
         } else {
