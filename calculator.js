@@ -1,4 +1,4 @@
-// Calculator Operations:
+// Calculator operators:
 const add = function (a, b) {
     return a + b;
 };
@@ -30,16 +30,34 @@ console.log(divide(0, 1));
 console.log(divide(2, 9));
 
 
-const operate = function (a, b, func) {
-    return func(a, b)
+const operate = function (calculatorState) {
+    calculatorState.calculationResult = calculatorState.operatorToBeUsed(calculatorState.firstNumber, calculatorState.secondNumber);
+    calculatorState.calculateButtonJustPressed = true;
+    return calculatorState.calculationResult;
 };
+
+const operators = {
+    add: add,
+    subtract: subtract,
+    multiply: multiply,
+    divide: divide
+}
+
+const lastButtonPressedEnum = {
+    clear:'clear',
+    number:'number',
+    calculate:'calculate',
+    operator:'operator'
+}
+
+
 
 // Monkey around with some things:
 
 let a = 3;
 let b = 5;
-let c = operate(a,b,add);
-console.log(` operate(a,b,add) gives ${c}`);
+// let c = operate(a, b, operators.subtract);
+// console.log(` operate(a,b,add) gives ${c}`);
 
 // Do not edit below this line
 // module.exports = {
@@ -50,15 +68,14 @@ console.log(` operate(a,b,add) gives ${c}`);
 //     operate
 //   };
 
-
-const appendInDisplayWindow = function (char) {
+const putInDisplayWindow = function (char) {
     // Input should be a string, typically a single character
-    if (calculatorState.operationButtonJustPressed) {
-        let displayWindow = document.querySelector(".display");
-        displayWindow.value = char;
-        calculatorState.operationButtonJustPressed = false;
+    let displayWindow = document.querySelector(".display");
+    
+    if (calculatorState.lastButtonPressed === lastButtonPressedEnum.operator || 
+        calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
+        displayWindow.value = char; // Clear the display value with new data
     } else {
-        let displayWindow = document.querySelector(".display");
         displayWindow.value += char;
     }
 }
@@ -69,18 +86,16 @@ const body = document.querySelector('body');
 
 // Global Object Holding Important State Variables::
 const calculatorState = {
-    operationButtonJustPressed: false,
-    operationToBeUsed: null,
+    operatorToBeUsed: null,
     firstNumber: null,
-    secondNumber: null
+    secondNumber: null,
+    calculationResult: null,
+    displayWindowString: null,
+    lastButtonPressed: lastButtonPressedEnum.clear// Default is 'clear', can be: 'number' 'calculate' 'clear' 'operator'
+
 }
 
-let operationButtonJustPressed = false;
-let operationToBeUsed = null;
-
-let firstNumber = null;
-let secondNumber = null;
-
+// lastButtonPressed can be: 
 
 
 // Create 10 buttons
@@ -93,32 +108,28 @@ for (i = 0; i <= 9; i++) {
     // Event listeners
 
     btn.addEventListener("click", () => {
-        appendInDisplayWindow(btn.textContent)
+        putInDisplayWindow(btn.textContent)
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.number;
     });
-
-
-
     body.appendChild(btn);
-
-
 }
 
-// Create Buttons for the operations
-const numOperations = 4;
-const operationsList = ['add', 'subtract', 'multiply', 'divide']
-for (i = 0; i < numOperations; i++) {
+// Create Buttons for the operators
+const numOperators = 4;
+const operatorList = ['add', 'subtract', 'multiply', 'divide']
+for (i = 0; i < operatorList.length; i++) {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button")
-    btn.textContent = operationsList[i];
+    btn.textContent = Object.getOwnPropertyNames(operators)[i];
     body.appendChild(btn);
 
     btn.addEventListener("click", () => {
-        operationButtonJustPressed = true;
+        
         let displayWindow = document.querySelector(".display");
         calculatorState.firstNumber = Number(displayWindow.value);
-        calculatorState.operationToBeUsed = btn.textContent;
-        console.log(`operation to be used is set: ${calculatorState.operationToBeUsed}`)
-
+        calculatorState.operatorToBeUsed = operators[btn.textContent];
+        console.log(`operation to be used is set: ${calculatorState.operatorToBeUsed}`)
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.operator;
     })
 }
 
@@ -130,6 +141,7 @@ clrbtn.textContent = "Clear";
 clrbtn.addEventListener("click", () => {
     let displayWindow = document.querySelector(".display");
     displayWindow.value = '';
+    calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
 }
 )
 
@@ -138,12 +150,33 @@ const computeBtn = document.createElement("button");
 computeBtn.setAttribute("class", "button");
 computeBtn.textContent = "=";
 computeBtn.addEventListener("click", () => {
+    // Only do the calculation if the last thing you did was click a number
+    if (calculatorState.lastButtonPressed === lastButtonPressedEnum.number)
+        {
     let displayWindow = document.querySelector(".display");
     calculatorState.secondNumber = Number(displayWindow.value);
-    displayWindow.value = operate(calculatorState.firstNumber, calculatorState.secondNumber,calculatorState.operationToBeUsed)
+    calculatorState.calculationResult = operate(calculatorState);
+    calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
+    putInDisplayWindow(calculatorState.calculationResult);
+    
+    } 
+
 }
 )
 body.appendChild(computeBtn)
 
 
 body.appendChild(clrbtn)
+
+
+// Things to Add: 
+
+// 1)
+// After a successful calculation,
+// show the full calculation typed out in the display window 
+// in lighter font
+
+// 2) Orient everything nicely together 
+
+// 3) Get nice colors
+
