@@ -122,11 +122,11 @@ function createDisplay() {
 // Create Clear Button
 
 function createClearButton() {
-    const clrbtn = document.createElement("button");
-    clrbtn.setAttribute("class", "button");
-    clrbtn.setAttribute("id", "clearButton")
-    clrbtn.textContent = "Clear";
-    clrbtn.addEventListener("click", () => {
+    const btn = document.createElement("button");
+    btn.setAttribute("class", "button");
+    btn.classList.add("clearButton")
+    btn.textContent = "Clear";
+    btn.addEventListener("click", () => {
         let displayWindow = document.querySelector(".display");
         displayWindow.value = '';
         calculatorState.secondNumber = null;
@@ -134,7 +134,17 @@ function createClearButton() {
         calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
     }
     )
-    calculatorContainer.appendChild(clrbtn)
+    calculatorContainer.appendChild(btn)
+
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.add('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.remove('highlighted');
+    }
+    )
 }
 
 
@@ -154,23 +164,42 @@ function createNumberButton(i) {
     });
     calculatorContainer.appendChild(btn);
 
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.add('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.remove('highlighted');
+    }
+    )
 }
 
 // Create a button for the . (decimal point)
 function createDecimalPointButton() {
-    const btnDot = document.createElement("button");
-    btnDot.setAttribute("class", "button")
-    btnDot.textContent = '.';
-    btnDot.classList.add('numberButton');
-    btnDot.addEventListener("click", () => {
+    const btn = document.createElement("button");
+    btn.setAttribute("class", "button")
+    btn.textContent = '.';
+    btn.classList.add('numberButton');
+    btn.addEventListener("click", () => {
         let displayWindow = document.querySelector(".display");
         if (!displayWindow.value.includes('.') ||
             calculatorState.lastButtonPressed === lastButtonPressedEnum.calculate) {
-            putInDisplayWindow(btnDot.textContent)
+            putInDisplayWindow(btn.textContent)
             calculatorState.lastButtonPressed = lastButtonPressedEnum.decimalPoint;
         }
     });
-    calculatorContainer.appendChild(btnDot);
+    calculatorContainer.appendChild(btn);
+
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.add('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.remove('highlighted');
+    }
+    )
 }
 
 // Create a button for an operator
@@ -181,7 +210,7 @@ function createOperatorButton(op) {
     btn.textContent = op.symbol;
     btn.value = op.name;
     btn.setAttribute("id", op.name)
-    calculatorContainer.appendChild(btn);
+    
     btn.classList.add("operatorStyle");
 
     btn.addEventListener("click", () => {
@@ -193,18 +222,29 @@ function createOperatorButton(op) {
         calculatorState.lastButtonPressed = lastButtonPressedEnum.operator;
     })
 
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.add('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.remove('highlighted');
+    }
+    )
+
+    calculatorContainer.appendChild(btn);
 }
 
 
 
 // Create Compute Button (=)
 function createEqualsButton() {
-    const computeBtn = document.createElement("button");
-    computeBtn.setAttribute("class", "button");
-    computeBtn.setAttribute("id", lastButtonPressedEnum.calculate)
-    computeBtn.textContent = "=";
-    computeBtn.classList.add("equalsStyle");
-    computeBtn.addEventListener("click", () => {
+    const btn = document.createElement("button");
+    btn.setAttribute("class", "button");
+    btn.setAttribute("id", lastButtonPressedEnum.calculate)
+    btn.textContent = "=";
+    btn.classList.add("equalsStyle");
+    btn.addEventListener("click", () => {
         // Only do the calculation if the last thing you did was click a number. 
         // And if there is a "first number" that was previously calculated during an "operator" click
 
@@ -235,16 +275,28 @@ function createEqualsButton() {
 
     }
     )
-    calculatorContainer.appendChild(computeBtn)
+
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.add('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.remove('highlighted');
+    }
+    )
+
+    calculatorContainer.appendChild(btn)
+   
 }
 
 //
 function createNegativeSignButton(){
-    const negButton = document.createElement("button");
-    negButton.setAttribute("class", "button");
-    negButton.setAttribute("id", "negativeSign")
-    negButton.textContent = "+/-";
-    negButton.addEventListener("click", () => {
+    const btn = document.createElement("button");
+    btn.setAttribute("class", "button");
+    btn.classList.add('numberButton');
+    btn.textContent = "+/-";
+    btn.addEventListener("click", () => {
     let displayWindow = document.querySelector(".display");
         if (!displayWindow.value.includes('-')) {
             putInDisplayWindow('-');
@@ -254,7 +306,18 @@ function createNegativeSignButton(){
         }
         calculatorState.lastButtonPressed = lastButtonPressedEnum.negativeSign;
     })
-    calculatorContainer.appendChild(negButton)
+
+    btn.addEventListener('mousedown',()=>{
+        btn.classList.toggle('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup',()=>{
+        btn.classList.toggle('highlighted');
+    }
+    )
+
+    calculatorContainer.appendChild(btn)
 }
 
 // Create a "test" button which will run through a bunch of system checks to make sure
