@@ -119,20 +119,36 @@ calculatorContainer.appendChild(divDisplayContainer);
 
 // Create Clear Button
 
-const clrbtn = document.createElement("button");
-clrbtn.setAttribute("class", "button");
-clrbtn.setAttribute("id", "clearButton")
-clrbtn.textContent = "Clear";
-clrbtn.addEventListener("click", () => {
-    let displayWindow = document.querySelector(".display");
-    displayWindow.value = '';
-    calculatorState.secondNumber = null;
-    calculatorState.firstNumber = null;
-    calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
-}
-)
-calculatorContainer.appendChild(clrbtn)
+// const clrbtn = document.createElement("button");
+// clrbtn.setAttribute("class", "button");
+// clrbtn.setAttribute("id", "clearButton")
+// clrbtn.textContent = "Clear";
+// clrbtn.addEventListener("click", () => {
+//     let displayWindow = document.querySelector(".display");
+//     displayWindow.value = '';
+//     calculatorState.secondNumber = null;
+//     calculatorState.firstNumber = null;
+//     calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
+// }
+// )
+// calculatorContainer.appendChild(clrbtn)
 
+function createClearButton() {
+    const clrbtn = document.createElement("button");
+    clrbtn.setAttribute("class", "button");
+    clrbtn.setAttribute("id", "clearButton")
+    clrbtn.textContent = "Clear";
+    clrbtn.addEventListener("click", () => {
+        let displayWindow = document.querySelector(".display");
+        displayWindow.value = '';
+        calculatorState.secondNumber = null;
+        calculatorState.firstNumber = null;
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.clear;
+    }
+    )
+    calculatorContainer.appendChild(clrbtn)
+}
+createClearButton();
 // Create the Divide Button
 
 // Create 10 buttons
@@ -193,7 +209,7 @@ for (const op in operators) {
 // Create Compute Button (=)
 const computeBtn = document.createElement("button");
 computeBtn.setAttribute("class", "button");
-computeBtn.setAttribute("id",lastButtonPressedEnum.calculate)
+computeBtn.setAttribute("id", lastButtonPressedEnum.calculate)
 computeBtn.textContent = "=";
 computeBtn.addEventListener("click", () => {
     // Only do the calculation if the last thing you did was click a number. 
@@ -228,7 +244,7 @@ calculatorContainer.appendChild(computeBtn)
 
 const testButton = document.createElement("button");
 testButton.setAttribute("class", "button");
-testButton.setAttribute("id","test")
+testButton.setAttribute("id", "test")
 testButton.textContent = "Test";
 testButton.addEventListener("click", () => {
     runSystemTest();
@@ -250,7 +266,7 @@ calculatorContainer.appendChild(testButton)
 // Automatically run a 1 + 2 = event.
 
 const runTest = true;
-function runSystemTest(){
+function runSystemTest() {
 
     // Specify the tests to be run:
     let allButtons = document.querySelectorAll("button");
@@ -258,7 +274,7 @@ function runSystemTest(){
     let addButton = document.getElementById(operators.add.name);
     let testButton2 = document.getElementById("2");
     let computeBtn = document.getElementById(lastButtonPressedEnum.calculate);
-    
+
     let displayVal = document.querySelector(".display");
 
     let clickEvent = new Event('click');
