@@ -98,11 +98,72 @@ const removeNegativeSign = function () {
     displayWindow.value = displayWindow.value.slice(1);
 }
 
+function isSingleDigitNumber(str) {
+    return /^[0-9]$/.test(str);
+}
+
+
 
 // Create The Calculator Main Container: 
 const body = document.querySelector('body');
+
+body.addEventListener('keydown', (event) => {
+    console.log(event.key);
+    keyToNumber = Number(event.key);
+    console.log(`isNaN(keyToNumber) ${isNaN(keyToNumber)}`);
+    console.log(`isNaN(event.key) ${isNaN(event.key)}`);
+    console.log(`isSingleDigitNumber ${isSingleDigitNumber(event.key)}`)
+    let clickEvent = new Event('click');
+    
+    // When a number is pressed, generate an event as  if you clicked the corresponding button:
+    if (isSingleDigitNumber(event.key)) {
+        const btn = document.getElementById(event.key.toString());
+        btn.dispatchEvent(clickEvent);
+    } else {
+        switch (event.key) {
+            case ".":
+                const btn2 = document.getElementById(lastButtonPressedEnum.decimalPoint);
+                btn2.dispatchEvent(clickEvent);
+                break;
+            case "+":
+                const btn3 = document.getElementById(operators.add.name);
+                btn3.dispatchEvent(clickEvent);
+                break;
+            case "-":
+                const btn4 = document.getElementById(operators.subtract.name);
+                btn4.dispatchEvent(clickEvent);
+                break;
+            case "/":
+                const btn5 = document.getElementById(operators.divide.name);
+                btn5.dispatchEvent(clickEvent);
+                break;
+            case "*":
+                const btn6 = document.getElementById(operators.multiply.name);
+                btn6.dispatchEvent(clickEvent);
+                break;
+            case "=":
+            case "Enter":
+                const btn7 = document.getElementById(lastButtonPressedEnum.calculate);
+                btn7.dispatchEvent(clickEvent);
+                break;
+            case "Delete":
+                const btn8 = document.getElementById(lastButtonPressedEnum.clear);
+                btn8.dispatchEvent(clickEvent);
+                break;
+
+        }
+
+    }
+
+
+}
+
+)
+
 const calculatorContainer = document.createElement("div");
 calculatorContainer.className = "calculatorContainer";
+
+
 body.appendChild(calculatorContainer)
 
 // First define functions that create various buttons. Then later I'll call those functions
@@ -120,6 +181,7 @@ function createDisplay() {
 function createClearButton() {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button");
+    btn.setAttribute("id", lastButtonPressedEnum.clear);
     btn.classList.add("clearButton")
     btn.textContent = "Clear";
     btn.addEventListener("click", () => {
@@ -167,11 +229,13 @@ function createNumberButton(i) {
         btn.classList.remove('highlighted');
     }
     )
+
 }
 
 function createDecimalPointButton() {
     const btn = document.createElement("button");
-    btn.setAttribute("class", "button")
+    btn.setAttribute("class", "button");
+    btn.setAttribute("id", lastButtonPressedEnum.decimalPoint);
     btn.textContent = '.';
     btn.classList.add('numberButton');
     btn.addEventListener("click", () => {
@@ -250,7 +314,7 @@ function createEqualsButton() {
             operate(calculatorState);
             calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
 
-            putInDisplayWindow(calculatorState.calculationResult.toFixed(3));
+            putInDisplayWindow(Math.round(calculatorState.calculationResult * 10000) / 10000);
 
             // Reset the "first" and "second" number so that the calculator thinks it still needs 
             // to click an operator before a new calculation can be performed
@@ -280,6 +344,7 @@ function createEqualsButton() {
 function createNegativeSignButton() {
     const btn = document.createElement("button");
     btn.setAttribute("class", "button");
+    btn.setAttribute("id", lastButtonPressedEnum.negativeSign);
     btn.classList.add('numberButton');
     btn.textContent = "+/-";
     btn.addEventListener("click", () => {
