@@ -59,7 +59,8 @@ const lastButtonPressedEnum = {
     operator: 'operator',
     decimalPoint: 'decimalPoint',
     negativeSign: 'negativeSign',
-    test: 'test'
+    test: 'test',
+    backspace: 'backspace'
 }
 
 // Global Object Holding Important State Variables::
@@ -93,9 +94,14 @@ const putInDisplayWindow = function (char) {
 
 }
 
-const removeNegativeSign = function () {
+const removeLeftmostChar = function () {
     let displayWindow = document.querySelector(".display");
     displayWindow.value = displayWindow.value.slice(1);
+}
+
+const removeRightmostChar = function () {
+    let displayWindow = document.querySelector(".display");
+    displayWindow.value = displayWindow.value.slice(0,displayWindow.value.length-1);
 }
 
 function isSingleDigitNumber(str) {
@@ -110,9 +116,7 @@ const body = document.querySelector('body');
 body.addEventListener('keydown', (event) => {
     console.log(event.key);
     keyToNumber = Number(event.key);
-    console.log(`isNaN(keyToNumber) ${isNaN(keyToNumber)}`);
-    console.log(`isNaN(event.key) ${isNaN(event.key)}`);
-    console.log(`isSingleDigitNumber ${isSingleDigitNumber(event.key)}`)
+
     let clickEvent = new Event('click');
     
     // When a number is pressed, generate an event as  if you clicked the corresponding button:
@@ -305,7 +309,8 @@ function createEqualsButton() {
 
         if ((calculatorState.lastButtonPressed === lastButtonPressedEnum.number ||
             calculatorState.lastButtonPressed === lastButtonPressedEnum.negativeSign ||
-            calculatorState.lastButtonPressed === lastButtonPressedEnum.decimalPoint
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.decimalPoint ||
+            calculatorState.lastButtonPressed === lastButtonPressedEnum.backspace
         ) &&
             calculatorState.firstNumber !== null
         ) {
@@ -354,7 +359,7 @@ function createNegativeSignButton() {
             putInDisplayWindow('-');
 
         } else {
-            removeNegativeSign();
+            removeLeftmostChar();
         }
         calculatorState.lastButtonPressed = lastButtonPressedEnum.negativeSign;
     })
@@ -372,6 +377,31 @@ function createNegativeSignButton() {
     calculatorContainer.appendChild(btn)
 }
 
+function createBackSpaceButton() {
+    const btn = document.createElement("button");
+    btn.setAttribute("class", "button");
+    btn.setAttribute("id", lastButtonPressedEnum.backspace);
+    btn.classList.add('backspaceButton');
+    btn.textContent = "DEL";
+    btn.addEventListener("click", () => {
+        let displayWindow = document.querySelector(".display");
+        removeRightmostChar()
+        calculatorState.lastButtonPressed = lastButtonPressedEnum.backspace;
+    })
+
+    btn.addEventListener('mousedown', () => {
+        btn.classList.toggle('highlighted');
+    }
+    )
+
+    btn.addEventListener('mouseup', () => {
+        btn.classList.toggle('highlighted');
+    }
+    )
+
+    calculatorContainer.appendChild(btn)    
+
+}
 
 
 // I actually put the calculator into the DOM here:
@@ -400,4 +430,5 @@ createNegativeSignButton();
 createOperatorButton(operators.divide);
 // Sixth Row 
 createClearButton();
+createBackSpaceButton()
 createEqualsButton();
