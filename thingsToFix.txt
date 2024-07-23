@@ -1,0 +1,12 @@
+
+
+Issues: 
+
+1) Top of calculator is cut off when window is slid down
+
+2) Floating point arithmetic sometimes generates super long decimal places
+
+3) Button creation can be done in HTML for clarity
+
+4) Delete button can be implemented to backspace a number accidentally pressed
+

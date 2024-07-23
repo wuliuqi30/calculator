@@ -23,7 +23,6 @@ const divide = function (a, b) {
 // Result = function(first number , second number, operator)
 const operate = function (calculatorState) {
     calculatorState.calculationResult = calculatorState.operatorToBeUsed.function(calculatorState.firstNumber, calculatorState.secondNumber);
-    return calculatorState.calculationResult;
 };
 
 
@@ -248,10 +247,10 @@ function createEqualsButton() {
         ) {
             let displayWindow = document.querySelector(".display");
             calculatorState.secondNumber = Number(displayWindow.value);
-            calculatorState.calculationResult = operate(calculatorState);
+            operate(calculatorState);
             calculatorState.lastButtonPressed = lastButtonPressedEnum.calculate;
 
-            putInDisplayWindow(calculatorState.calculationResult);
+            putInDisplayWindow(calculatorState.calculationResult.toFixed(3));
 
             // Reset the "first" and "second" number so that the calculator thinks it still needs 
             // to click an operator before a new calculation can be performed
